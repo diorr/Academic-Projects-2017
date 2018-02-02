@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="msapplication-tap-highlight" content="no" />
+    <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width" />
+    <meta http-equiv="Content-Security-Policy" content="default-src * 'unsafe-inline'; style-src 'self' 'unsafe-inline'; media-src *" />
+   
+    <link rel="stylesheet" type="text/css" href="css/index.css" />
+    <title>RoadTrip</title>
+</head>
+
+ <body>
+		<script type="text/javascript" src="cordova.js"></script>
+		<script src="https://www.gstatic.com/firebasejs/4.8.0/firebase.js"></script>
+		<script>
+		  // Initialize Firebase
+		  var config = {
+		    apiKey: "AIzaSyD6uonrdf1rL8nC3aiRfUa14zUqYra2es8",
+		    authDomain: "roadtrip-1d5b1.firebaseapp.com",
+		    databaseURL: "https://roadtrip-1d5b1.firebaseio.com",
+		    projectId: "roadtrip-1d5b1",
+		    storageBucket: "roadtrip-1d5b1.appspot.com",
+		    messagingSenderId: "461431680534"
+		  };
+		  firebase.initializeApp(config);
+		</script>	
+		<script>
+			var latitude = 1;
+			var longitude = 1;
+			var name;
+			var desc;
+			function doShit(){
+				name = document.getElementById("txtName").value;
+				desc = document.getElementById("txtDesc").value;
+				navigator.geolocation.getCurrentPosition(onSuccess, onError);
+			}
+			function onSuccess(position){
+				latitude = position.coords.latitude;
+				longitude = position.coords.longitude;
+				addItem();
+			}
+		
+			function onError(error){
+				alert("Error getting Location");
+			}
+			
+			function addItem(){
+				var itemObj = {
+					location_name: name,
+					desc: desc,
+					latitude: latitude,
+					longitude: longitude
+				};
+				
+				var teamMembers = {
+					Name_1: "Riley Sims",
+					Name_2: "Aaron Thawe",
+					Name_3: "Scott Shields",
+					Name_4: "Diana Orr"
+				};
+			
+				var itemId = firebase.database().ref('Group 5/Team Data').push().key;
+				
+				firebase.database().ref('Group 5/Team Data').child(itemId).set(itemObj).then(function(error){
+					if(error){
+						console.error(error);
+					}else{
+						alert("success adding to firebase database");
+					}
+				});
+				
+				firebase.database().ref('Group 5').child("Team Members").set(teamMembers).then(function(error){
+					if(error){
+						console.error(error);
+					}else{
+						alert("Added team members to DB");
+					}
+				
+				});
+			}
+			
+			document.addEventListener("deviceready", onDeviceReady, false);
+			function onDeviceReady(){
+			
+			}
+		</script>
+		<label>Name: </label>
+		<input type="text" id="txtName">
+		</br>
+		<label>Description: </label>
+		<input type="text" id="txtDesc">
+		</br>
+		<input type="button" id="submit" value="Submit" onclick="doShit();">
+    </body>
+</html>

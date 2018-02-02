@@ -1,0 +1,13 @@
+<script src="https://www.gstatic.com/firebasejs/4.8.0/firebase.js"></script>
+<script>
+  // Initialize Firebase
+  var config = {
+    apiKey: "AIzaSyD6uonrdf1rL8nC3aiRfUa14zUqYra2es8",
+    authDomain: "roadtrip-1d5b1.firebaseapp.com",
+    databaseURL: "https://roadtrip-1d5b1.firebaseio.com",
+    projectId: "roadtrip-1d5b1",
+    storageBucket: "roadtrip-1d5b1.appspot.com",
+    messagingSenderId: "461431680534"
+  };
+  firebase.initializeApp(config);
+</script>
