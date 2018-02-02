@@ -1,0 +1,153 @@
+header, nav, section {display:block;}
+body {
+	margin:0;
+	padding: 0;
+	font: 100% cuprum, verdana, sans-serif;
+}
+
+header {
+	margin: 0;
+	padding: 0;
+	background: url(images/topbanner.jpg) no-repeat;
+	background-position: fixed;
+	background-size: cover;
+	width: 100%;
+	min-height: 411px;
+	color: #fff;
+}
+
+.bannertitle {
+	padding-top: 275px;
+	text-align: center;
+}
+
+.whitelrg, .gldtxt {
+	font-size: 500%;
+	text-shadow: 1px 1px black, -1px -1px black;
+}
+
+.gldtxt {
+	color: #ffcc73;
+}
+
+.italictxt {
+	font-size: 300%;
+	font-style: italic;
+}
+	
+	
+section {
+	padding: 0;
+	margin: 0;
+	background: url(images/excavator.jpg) no-repeat;
+	background-position: fixed;
+	background-size: cover;
+	width: 100%;
+	min-height: 518px;
+}
+
+/*----------------------- menu sprites ---------------------*/
+
+nav {
+	width: 700px;
+	height: 200px;
+	margin: 200px auto 100px auto;
+}
+
+nav ul {
+	list-style: none;
+	padding: 0;
+}
+
+nav li {
+	float: left;
+	margin: 40px;
+	font: italic 100% cuprum, verdana, sans-serif;
+	color: #666;
+}
+
+nav li:hover {
+	color: #ca9943;
+}
+
+nav a {
+	display: block;
+	width: 125px; 
+	height: 79px;
+}
+
+nav a[href="team.html"] {
+	background: url(images/menusprite.jpg) no-repeat 0 0;
+	overflow: hidden;
+}
+
+nav a[href="team.html"]:hover {
+	background: url(images/menusprite.jpg) no-repeat 0 -79px;
+	overflow: hidden;
+}
+
+nav a[href="where.html"] {
+	background: url(images/menusprite.jpg) no-repeat -125px 0;
+	overflow: hidden;
+}
+
+nav a[href="where.html"]:hover {
+	background: url(images/menusprite.jpg) no-repeat -125px -79px;
+	overflow: hidden;
+}
+
+
+
+nav a[href="clients.html"] {
+	background: url(images/menusprite.jpg) no-repeat -250px 0;
+	overflow: hidden;
+}
+
+nav a[href="clients.html"]:hover {
+	background: url(images/menusprite.jpg) no-repeat -250px -79px;
+	overflow: hidden;
+}
+
+/*********social media sprite***********/
+
+.social {
+	width: 100%;
+	height: 50px;
+	margin: 0px auto 100px 0px;
+}
+
+.sociallink {
+	float: right;
+	padding-right: 10px;
+	margin: 10px;
+}
+
+nav a[href="facebook.html"] {
+	background: url(images/socialmediasprite.jpg) no-repeat 0 0;
+	overflow: hidden;
+}
+
+nav a[href="facebook.html"]:hover {
+	background: url(images/socialmediasprite.jpg) no-repeat 0 -79px;
+	overflow: hidden;
+}
+
+nav a[href="tumblr.html"] {
+	background: url(images/socialmediasprite.jpg) no-repeat -125px 0;
+	overflow: hidden;
+}
+
+nav a[href="tumblr.html"]:hover {
+	background: url(images/socialmediasprite.jpg) no-repeat -125px -79px;
+	overflow: hidden;
+}
+
+nav a[href="pinterest.html"] {
+	background: url(images/socialmediasprite.jpg) no-repeat -250px 0;
+	overflow: hidden;
+}
+
+nav a[href="pinterest.html"]:hover {
+	background: url(images/socialmediasprite.jpg) no-repeat -250px -79px;
+	overflow: hidden;
+}

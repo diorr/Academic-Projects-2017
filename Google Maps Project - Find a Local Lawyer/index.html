@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+	<title>Find A Local Lawyer</title>
+ 	<meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <link rel="stylesheet" type="text/css" href="main.css">
+    
+  	<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAXOeIeCTXR5fvMSXbECPX0bBDVZEV7lvI&callback=initMap&libraries=places" async defer></script>
+	<script>
+		// create basic global variables
+		var map = {};
+		var markers = [];
+		var place = [];
+		var globalPos;
+		
+		// *************************************************************
+		// onload event handler to create the initial map and map object
+		function initMap() {
+			// create a container to draw the map
+			// inside a <div>
+			var mapCanvas = (document.getElementById("map"));
+			
+			// define some map properties
+			var mapOptions = {
+				center: new google.maps.LatLng(43.011987, -81.200276),
+				zoom: 10
+			}
+
+			// call the constructor to create a new map object
+			// and then get your geo location
+			map = new google.maps.Map(mapCanvas, mapOptions);
+			getLocation();
+		}
+			
+		// ***********************************************************
+		// Get and then set the map position based on the geo location
+		function getLocation() {
+		    if (navigator.geolocation) {
+				// showPosition is a reference to a JS function (below)
+		        navigator.geolocation.getCurrentPosition(showPosition);
+		    }
+		}
+		
+		// *********************************
+		// helper function for getLocation()
+		function showPosition(position) {
+			globalPos = {
+			lat: position.coords.latitude, 
+			lng: position.coords.longitude
+			};
+			
+			//center the map on current position
+			map.setCenter(globalPos);
+		}
+			
+		// ***************************************************************
+		// this event handler demonstrates Google Places service
+		// by requesting all lawyers within a 100000 metre radius
+		// based on the current geo location (defined by globalPos object)
+		function lawyers() {
+			// delete any existing markers
+			deleteMarkers();
+
+			// create a request object
+			var request = {
+				location: globalPos, 
+				radius: '100000',
+				query: ['law']
+			};
+
+			// create the service object
+			var service = new google.maps.places.PlacesService(map);
+			
+			// the "callback" function below
+			service.textSearch(request, callback);
+			
+			var request = {
+				location: globalPos, 
+				radius: '100000',
+				query: ['lawyer']
+			};
+
+
+			// perform a search based on the request object and callback
+			// the "callback" function below
+			service.textSearch(request, callback);
+
+			var request = {
+				location: globalPos, 
+				radius: '100000',
+				query: ['lawyers']
+			};
+
+			// create the service object
+			//var service = new google.maps.places.PlacesService(map);
+			
+			// perform a search based on the request object and callback
+			// the "callback" function below
+			service.textSearch(request, callback);
+			
+		
+			// this is an inner callback function as referenced immediately above
+			function callback(results, status) {
+				if (status === google.maps.places.PlacesServiceStatus.OK) {
+					for (var i = 0; i < results.length; i++){
+						addMarker(results[i]);
+					}
+				}
+			}
+			
+			// display all the pins
+			displayAllMarkers(map);
+		}
+			
+		// **************************************************************
+		// function creates a marker object and adds the new marker (pin)
+		// to the marker array
+		function addMarker(place) {
+			// create a marker (pin) object
+			var marker = new google.maps.Marker({
+				position: place.geometry.location,
+				map: map,
+				title: place.name + "\n" + place.formatted_address, 
+				animation: google.maps.Animation.DROP
+			});
+		
+			// add a "click" event handler to centre on the marker
+			marker.addListener('click', function() {
+				map.setZoom(16);
+				map.setCenter(marker.getPosition());
+			});
+			
+			// push the marker object onto the markers array
+			markers.push(marker);
+		}
+
+		// *********************************************************
+		// display all the marker objects (pins) in the marker array
+		function displayAllMarkers(map) {
+			for (var i = 0; i < markers.length; i++) {
+				markers[i].setMap(map);
+			}
+		}		
+			
+		// *************************************************
+		// delete all map markers and init the markers array
+		function deleteMarkers() {
+			displayAllMarkers(null);
+			markers = [];
+		}
+	
+	</script>
+
+ 	
+	
+</head>
+<body>
+	<header>
+		<h1>Find A Local Law Professional</h1>
+	</header>
+	<nav>
+		<h2>Suggested Local Lawyers</h2>
+
+		<!--Ordered list of contact information for local lawyers.
+			Includes contact information and link which opens externally in a new tab-->
+		<ol>
+			<li><a href="https://www.google.ca/url?sa=t&rct=j&q=&esrc=s&source=web&cd=1&cad=rja&uact=8&ved=0ahUKEwit-5Ows-bWAhVrzIMKHWDdDh0QgU8IHDAA&url=http%3A%2F%2Fwww.ronellislaw.com%2F&usg=AOvVaw1cvoyRtSVhPRonkvVc4WID" target="_blank">Ron Ellis Law Professional Corporation</a> - 468 Ridout St N - 519-932-1133</li>
+			<li><a href="https://www.google.ca/aclk?sa=l&ai=DChcSEwjTjYCvsebWAhXEQYYKHQnmARMYABAAGgJ2dQ&sig=AOD64_2J_zZlS11gToRChTdHz53Bef8QaQ&q=&ctype=99&ved=0ahUKEwjT9PSusebWAhURyYMKHSKNDecQhKwBCDo&adurl=" target="_blank">Beckett Personal Injury Lawyers</a> - 630 Richmond Street - 1-866-674-4994</li>
+			<li><a href="https://www.google.ca/url?sa=t&rct=j&q=&esrc=s&source=web&cd=1&cad=rja&uact=8&ved=0ahUKEwjT9PSusebWAhURyYMKHSKNDecQgU8IRjAA&url=http%3A%2F%2Fwww.london-lawyer.ca%2F&usg=AOvVaw3XG0chAoR5J0SotSdiA1uK" target="_blank">Peter J Quigley Law Office</a> - 924 Oxford St E - 519-453-3393</li>
+			<li><a href="https://www.google.ca/url?sa=t&rct=j&q=&esrc=s&source=web&cd=2&cad=rja&uact=8&ved=0ahUKEwjT9PSusebWAhURyYMKHSKNDecQgU8IUjAB&url=http%3A%2F%2Fwww.siskinds.com%2F&usg=AOvVaw3WVlNUoMh7m6Dr8FdqBgES" target="_blank">Siskinds LLP</a> - 680 Waterloo St - 519-672-2121</li>
+			<li><a href="https://www.google.ca/url?sa=t&rct=j&q=&esrc=s&source=web&cd=3&cad=rja&uact=8&ved=0ahUKEwjT9PSusebWAhURyYMKHSKNDecQgU8IXjAC&url=http%3A%2F%2Fwww.bbo.on.ca%2F&usg=AOvVaw0LB7CqTOQvq5dl-r24wnDQ" target="_blank">Brown Beattie O'Donovan</a> - 380 Wellington St #1600 - 519-679-0400</li>
+			<li><a href="https://www.google.ca/url?sa=t&rct=j&q=&esrc=s&source=web&cd=4&cad=rja&uact=8&ved=0ahUKEwjT9PSusebWAhURyYMKHSKNDecQgU8IajAD&url=http%3A%2F%2Fwww.cohenhighley.com%2F&usg=AOvVaw3na3xJtZs_UstP7TAzjzsa" target="_blank">Cohen Highly LLP - One London Place</a> - 519-672-9330</li>
+			<li><a href="https://www.google.ca/url?sa=t&rct=j&q=&esrc=s&source=web&cd=9&cad=rja&uact=8&ved=0ahUKEwjT9PSusebWAhURyYMKHSKNDecQgU8IpgEwCA&url=http%3A%2F%2Fwww.personalinjurylawyertoronto.com%2F&usg=AOvVaw25NrY7jsKl7_a5x2G8dmBu" target="_blank">Goldfinger Law</a> - 341 Talbot St - 519-937-1523</li>
+		</ol>
+		
+
+	</nav>
+	<main id="map"></main>
+	<footer>
+		<input type="button" id="btnLoad"  value="Load Lawyer Locations"  onclick="lawyers();" />
+		<input type="button" id="btnClear"  value="Hide Lawyers"  onclick="deleteMarkers();" />
+	</footer>
+</body>
+</html>
+
+
+

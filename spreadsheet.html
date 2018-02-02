@@ -1,0 +1,349 @@
+<html>
+<head runat="server">
+	<title>Spreadsheet Project</title>
+	<style type="text/css">
+        body {
+            background-color: #BFC9DC;
+        }
+
+
+        .TableClass {
+            font-family: Verdana, Arial, Helvetica;
+            font-size: 9.0pt;
+        }
+
+        .BaseColumn {
+            text-align: center;
+        }
+
+        .AlphaColumn {
+            width: 40px;
+            cursor: pointer;
+            background-color: #C3DAF9;
+            border: 1px solid #002d96;
+        }
+    </style>
+	
+	
+	<script language="JavaScript" type="text/javascript">
+		var selectedRef; //globally stored reference to allow for selecting
+		var formulas = [];
+		var formulaLocal= [];
+		var count =0;
+		
+		function createTable(){
+			document.getElementById("spreadsheetTable").innerHTML = buildTable(20, 10); //build the table
+			load(); //call the load function immediately after building the table
+		}
+		
+		function load(){
+			//two for loops to step through the entire spreadsheet
+			for(var x = 1; x <=20; ++x){
+				for(var i = 1; i<=10; ++i){
+					document.getElementById(x+"_"+i).innerHTML = localStorage.getItem(x+"_"+i); //loading from local storage to the spreadsheet
+				}
+			}
+			count = localStorage.getItem("length");
+			for(var z = 0; z<count; ++z){
+				formulas[z] = localStorage.getItem(z+"val");
+				var temp = localStorage.getItem(z+"local");
+				formulaLocal[z] = document.getElementById(temp);
+			}
+		}
+		
+		function emptyTable(){
+			//two for loops to step through the entire spreadsheet
+			for(var x = 1; x <=20; ++x){
+				for(var i = 1; i<=10; ++i){
+					document.getElementById(x+"_"+i).innerHTML = ""; //set all the cells in the spreadsheet to be blank
+					//localStorage.removeItem(x+"_"+i);
+				}
+			}
+			formulas = [];
+			formulaLocal = [];
+			count = 0;
+		}
+		
+		function save(){
+			//two for loops to step through the entire spreadsheet
+			for(var x = 1; x <=20; ++x){
+				for(var i = 1; i<=10; ++i){
+					localStorage.setItem(x+"_"+i, document.getElementById(x+"_"+i).innerHTML); //save the data to local storage from each individual cell
+				}
+			}
+			
+			localStorage.setItem("length", count);
+			for(var z = 0; z<count; ++z){
+				localStorage.setItem(z+"val", formulas[z]);
+				localStorage.setItem(z+"local", formulaLocal[z].id);
+			}
+		}
+		
+		function buildTable(rows, columns){
+			//create the table
+			var divHTML = "<table border='1' cellpadding='0' cellspacing='0' class='TableClass'>";
+			
+			divHTML+= "<tr><th></th>";
+			
+			for(var i = 0; i<columns; ++i){
+				divHTML += "<th>" + String.fromCharCode(i + 65) + "</th>"; //create the line of letters
+			}
+			
+			divHTML += "</tr>";
+			
+			for(var x = 1; x <= rows; ++x){
+				divHTML += "<tr>";
+				
+				divHTML += "<td id='"+ x +"_0' class='BaseColumn'>"+x+"</td>";
+				
+				for (var i = 1; i <=columns; ++i){
+					divHTML += "<td id='"+ x + "_"+ i+ "'class='AlphaColumn' onclick='clickCell(this)'></td>"; //create the cells with the onclicks
+				}
+				
+				divHTML += "</tr>";
+				
+			}
+			divHTML += "</table>";
+			
+			return divHTML;
+		}
+		
+		function clickCell(ref) {
+			document.getElementById("txtInput").value = ref.innerHTML; //set the textbox to be the current value of the selected cell
+			ref.style.background = "white"; //show that it's selected
+			if(selectedRef!=null){ //if its not the first time you've selected something. change your last selection to deselected background color
+				selectedRef.style.background = "#C3DAF9";
+			}
+			selectedRef = ref; //save the reference of the selection into the global variable
+		}
+		
+		function recalc(){
+			for(var i = 0; i<formulas.length; ++i){
+				var ar = formulas[i].split(",");
+				var column1 = letterConversion(ar[0].substr(0,1).toUpperCase());
+				column1 = column1*1;
+				var row1 = ar[0].substr(1,2);
+				row1 = row1*1;
+				var column2 = letterConversion(ar[1].substr(0,1).toUpperCase());
+				column2 = column2*1;
+				var row2 = ar[1].substr(1,2);
+				row2 = row2*1;
+				var totalVal = 0;
+				var errorCheck = false;
+				if(column1 === column2){
+					if(row1 > row2){ //if argument 1 is bigger then argument 2 swap them
+						var temp = 0;
+						temp = row1;
+						row1 = row2;
+						row2 = temp;
+					}
+					while(row1 <= row2){ //add through the rows
+						var cell = document.getElementById(row1+"_"+column1).innerHTML; //get the value from the cell
+						cell = cell*1; //make sure it's a number
+						if(!isNaN(cell)){ //test if it's a number
+							totalVal += cell; //add to the total value
+							++row1; //increase the row to the next column
+						}
+						else{ //if its not a number let them know and don't print the formula to the cell
+							alert("Please make all cells between "+ar[0]+" and "+ar[1]+" a number and try again. Also make sure that you are not selecting between the two");
+							errorCheck = true;
+							break;
+						}
+					}
+					if(!errorCheck){ //if it didn't error then set the cell to be the total value
+						formulaLocal[i].innerHTML = totalVal;
+					}else{ //otherwise set the cell to be blank
+						formulaLocal[i].innerHTML = "=SUM("+ar[0]+":"+ar[1]+")";
+					}
+				}else if(row1 === row2){ //repeat above but for rows instead of columns
+					if(column1 > column2){ //swap them around if argument 2 is less then argument 1
+						var temp = 0;
+						temp = column1;
+						column1 = column2;
+						column2 = temp;
+					}
+					while(column1 <= column2){
+						var cell = document.getElementById(row1+"_"+column1).innerHTML;
+						cell = cell*1;
+						if(!isNaN(cell)){
+							totalVal += cell;
+							++column1;
+						}
+						else{
+							alert("Please make all cells between "+ar[0]+" and "+ar[1]+" a number and try again. Also make sure that you are not selecting between the two");
+							errorCheck = true;
+							break;
+						}
+					}
+					if(!errorCheck){
+						console.log("-----------------------------");
+						formulaLocal[i].innerHTML = totalVal;
+					}else{
+						formulaLocal[i].innerHTML = "=SUM("+ar[0]+":"+ar[1]+")";
+					}
+				} else { //if neither the columns or rows match let them know and print nothing to the cell
+					alert("Please make sure either your rows or columns match");
+					formulaLocal[i].innerHTML = "";
+				}
+			}
+		}
+		
+		function validateEnter(evnt){
+			if(evnt.keyCode === 13){ //if the key that was pressed was enter
+				selectedRef.innerHTML = document.getElementById("txtInput").value; //set the data from the textbox to the cell
+				var tbValue = selectedRef.innerHTML;
+				var ar = checkPattern(tbValue); //check to see if they are attempting a mathmatic operation
+				var recalcCheck = true;
+				if(ar === null){ //if they aren't doing math...
+					for(var i = 0; i<formulaLocal.length;++i){//check if they are overwriting a formula
+						if(selectedRef  === formulaLocal[i]){ //if they are...
+							formulaLocal.splice(i, 1); //remove the formula from the arrays
+							formulas.splice(i,1);
+						}
+					}
+					recalc(); //recalculate all formulas
+				}else{ //if they are doing math
+					var column1 = letterConversion(ar[1].substr(0,1).toUpperCase()); //convert the letter into a number
+					column1 = column1*1; //make sure javascript has it saved as a number
+					var row1 = ar[1].substr(1,2); //grab the second argument and save it
+					row1 = row1*1; //make sure that it is a number as well
+					var column2 = letterConversion(ar[2].substr(0,1).toUpperCase()); //repeat for second argument
+					column2 = column2*1;
+					var row2 = ar[2].substr(1,2);
+					row2 = row2*1;
+					var totalVal = 0; //declare a total
+					var errorCheck = false; //declare an error checking boolean
+					if(column1 === column2){
+						if(row1 > row2){ //if argument 1 is bigger then argument 2 swap them
+							var temp = 0;
+							temp = row1;
+							row1 = row2;
+							row2 = temp;
+						}
+						while(row1 <= row2){ //add through the rows
+							var cell = document.getElementById(row1+"_"+column1).innerHTML; //get the value from the cell
+							cell = cell*1; //make sure it's a number
+							if(!isNaN(cell)){ //test if it's a number
+								totalVal += cell; //add to the total value
+								++row1; //increase the row to the next column
+							}
+							else{ //if its not a number let them know and don't print the formula to the cell
+								alert("Please make all cells between "+ar[1]+" and "+ar[2]+" a number and try again. Also make sure that you are not selecting between the two");
+								errorCheck = true;
+								break;
+							}
+						}
+						if(!errorCheck){ //if it didn't error then set the cell to be the total value
+							selectedRef.innerHTML = totalVal;
+						}else{ //otherwise set the cell to be blank
+							selectedRef.innerHTML = "";
+						}
+					}else if(row1 === row2){ //repeat above but for rows instead of columns
+						if(column1 > column2){ //swap them around if argument 2 is less then argument 1
+							var temp = 0;
+							temp = column1;
+							column1 = column2;
+							column2 = temp;
+						}
+						while(column1 <= column2){
+							var cell = document.getElementById(row1+"_"+column1).innerHTML;
+							cell = cell*1;
+							if(!isNaN(cell)){
+								totalVal += cell;
+								++column1;
+							}
+							else{
+								alert("Please make all cells between "+ar[1]+" and "+ar[2]+" a number and try again. Also make sure that you are not selecting between the two");
+								errorCheck = true;
+								break;
+							}
+						}
+						if(!errorCheck){
+							selectedRef.innerHTML = totalVal;
+						}else{
+							selectedRef.innerHTML = "";
+						}
+					} else { //if neither the columns or rows match let them know and print nothing to the cell
+						alert("Please make sure either your rows or columns match");
+						selectedRef.innerHTML = "";
+					}
+					recalc();
+				}
+			}
+		}
+		
+		function checkPattern(tbValue){
+			var pattern = /[:|\(|\)]/; //regex stuff we haven't been explained yet
+			var ar = tbValue.split(pattern); //split the patern
+			var sum = ar[0].toUpperCase(); //upercase incase of typine =sum rather than =SUM
+			if(ar.length < 3){
+				return null; 
+			} else if (sum != "=SUM"){
+				return null;
+			} else{
+				formulas[count] = ar[1]+","+ar[2];
+				formulaLocal[count] = selectedRef;
+				++count;
+				return ar;
+			}
+		}
+		
+		function letterConversion(input){ //take a letter in and convert it to a number
+			var out ="";
+			switch(input){ //switch case to convert
+				case "A":
+					out = "1";
+					break;
+				case "B":
+					out = "2";
+					break;
+				case "C":
+					out = "3";
+					break;
+				case "D":
+					out = "4";
+					break;
+				case "E":
+					out = "5";
+					break;
+				case "F":
+					out = "6";
+					break;
+				case "G":
+					out = "7";
+					break;
+				case "H":
+					out = "8";
+					break;
+				case "I":
+					out = "9";
+					break;
+				case "J":
+					out = "10";
+					break;
+				default:
+					console.log("broken"); //incase of broken say that it's broken
+					break;
+			}
+			return out;
+		}
+		
+	</script>
+</head>
+<body onload="createTable();">	
+	<div>
+		<input type="text" id="txtInput" onkeyup="validateEnter(event);"/>
+		<input type="button" onclick="save();" value="Save"/>
+		<input type="button" onclick="load();" value="Load"/>
+		<input type="button" onclick="emptyTable();" value="Clear"/>
+		</br></br>
+		<div id="spreadsheetTable">
+		</div>
+	</div>
+	<h1> Instructions </h1>
+	<label> Click a cell to select it then type into the textbox and press enter</label></br>
+	<label> Press the SAVE button to save all the table's data for later use</label></br>
+	<label> Press the LOAD button to load all the previously saved data</label></br>
+	<label> Press the CLEAR button to clear all current data</label>
+</body>
+</html>

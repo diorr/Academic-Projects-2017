@@ -1,0 +1,64 @@
+body{
+	color:#9b889a;
+	background-color: #1c131b;
+	line-height: 15px;
+	font:normal 14px 'Rubik', sans-serif;
+}
+
+header{
+	width: 80%;
+	margin:0 auto; /*centers it on page*/
+	background-color: #e0d0df;
+	margin-bottom: 1.5%;
+	border-radius: 25px;
+	padding:1%;
+}
+
+header h1{
+	font:normal 3em 'Trirong', sans-serif;
+	padding:5px;
+	border-radius: 25px;
+    border: 2px solid #1c131b;
+    margin:0 auto;
+    text-align: center;
+    text-transform: uppercase;
+}
+
+#wrap{
+	width: 75%;
+	margin:0 auto; /*centers it on page*/
+	background-color: #e0d0df;
+	padding:2%;
+	border-radius: 25px;
+	margin-top: 1%
+}
+
+label, input, option, select {
+	margin: 5px 5px 5px 5px;
+	border-radius: 25px;
+	padding: 5px 5px 5px 5px;
+}
+
+input, option, select {
+	margin: 5px 5px 5px 5px;
+	border-radius: 25px;
+	padding: 5px 5px 5px 5px;
+	background-color: #f2f2f2; 
+}
+
+option {
+	font:normal 14px 'Rubik', sans-serif;
+	color:#9b889a;
+}
+
+
+table, tr, td {
+    border: 2px solid black;
+    border-radius: 25px;
+    padding: 5px 5px 5px 5px;
+    margin: 5px 5px 5px 5px;
+}
+
+table {
+	margin:0 auto;
+}
